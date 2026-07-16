@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EZ-Food 2</title>
+  <style>
+    :root {
+      --bg: #f6f3ec;
+      --card: #fffdf9;
+      --white: #ffffff;
+      --line: #dfd7ca;
+      --text: #233028;
+      --muted: #67746c;
+      --accent: #547a5a;
+      --accent-2: #6d8d72;
+      --danger: #af5a5a;
+      --link: #2d67c9;
+      --recipe-text: #3f8550;
+      --soft-yellow: #f7efb8;
+      --soft-yellow-border: #e3d98a;
+      --soft-red: #f7d9d9;
+      --soft-red-border: #e5b8b8;
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --radius: 16px;
+      --aisle-1: #dff3df;
+      --aisle-2: #f8e3d5;
+      --aisle-3: #e7e3f8;
+      --aisle-4: #fde3ee;
+      --aisle-5: #e2f2f2;
+      --aisle-6: #f8edcf;
+      --aisle-7: #e6f0db;
+      --aisle-8: #f3e1d6;
+      --aisle-9: #e4ebfb;
+      --aisle-10: #f6e0f4;
+      --aisle-11: #e5f5ea;
+      --aisle-12: #f9e7db;
+      --aisle-13: #ece7d8;
+      --aisle-14: #dfeaf1;
+      --aisle-15: #f3eadf;
+      --aisle-16: #e4f4f0;
+      --aisle-17: #f8e8ef;
+      --aisle-18: #ececfa;
+      --aisle-19: #f1efd8;
+      --aisle-20: #e7f1dc;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .app {
+      max-width: 760px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 14px 14px 28px;
+    }
+    .title {
+      font-size: 2rem;
+      font-weight: 800;
+      text-align: center;
+      margin: 10px 0 14px;
+      letter-spacing: .02em;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    button, select, input, textarea {
+      font: inherit;
+    }
+    .tab-btn, .action-btn, .ghost-btn, .mini-btn, .tiny-btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .ghost-btn { box-shadow: none; background: white; }
+    .mini-btn {
+      padding: 9px 10px;
+      box-shadow: none;
+      font-size: .9rem;
+    }
+    .tiny-btn {
+      padding: 7px 9px;
+      box-shadow: none;
+      font-size: .82rem;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .action-btn {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .action-btn.yellow, .mini-btn.yellow {
+      background: var(--soft-yellow);
+      border-color: var(--soft-yellow-border);
+      color: #5b531e;
+    }
+    .mini-btn.red {
+      background: var(--soft-red);
+      border-color: var(--soft-red-border);
+      color: #7d3535;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .top-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .recipes-card {
+      background: var(--white);
+    }
+    .section-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: .94rem;
+    }
+    .message {
+      margin-top: 8px;
+      color: var(--muted);
+      min-height: 1.2em;
+      font-size: .92rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: white;
+      color: var(--text);
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .dinner-slot {
+      padding: 8px 0 14px;
+      border-bottom: 1px solid #ebe4d8;
+    }
+    .dinner-slot:last-child { border-bottom: 0; padding-bottom: 2px; }
+    .dinner-row-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .slot-machine {
+      position: relative;
+    }
+    .slot-machine.spinning select {
+      animation: slotPulse .1s linear infinite alternate;
+    }
+    @keyframes slotPulse {
+      from { transform: translateY(0); }
+      to { transform: translateY(-1px); }
+    }
+    .recipe-list {
+      display: grid;
+      gap: 8px;
+    }
+    .recipe-state {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      overflow: hidden;
+    }
+    .recipe-state.static {
+      padding: 11px 12px;
+      font-weight: 700;
+    }
+    .recipe-state.empty {
+      color: var(--muted);
+    }
+    .recipe-state.link a {
+      display: block;
+      padding: 11px 12px;
+      color: var(--link);
+      font-weight: 800;
+      text-decoration: underline;
+    }
+    .recipe-accordion-btn {
+      width: 100%;
+      border: 0;
+      background: white;
+      text-align: left;
+      padding: 11px 12px;
+      color: var(--recipe-text);
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: none;
+    }
+    .recipe-accordion-btn .arrow {
+      transition: transform .18s ease;
+      flex: 0 0 auto;
+    }
+    .recipe-accordion.open .recipe-accordion-btn .arrow {
+      transform: rotate(180deg);
+    }
+    .recipe-accordion-body {
+      display: none;
+      padding: 0 12px 12px;
+      white-space: pre-wrap;
+      color: var(--text);
+      line-height: 1.45;
+      font-size: .95rem;
+      background: white;
+    }
+    .recipe-accordion.open .recipe-accordion-body {
+      display: block;
+    }
+
+    .shopping-list {
+      display: grid;
+      gap: 8px;
+    }
+    .shop-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      touch-action: pan-y;
+      user-select: none;
+      transition: transform .15s ease, opacity .15s ease;
+      overflow: hidden;
+    }
+    .shop-item.extra::after {
+      content: "Swipe left to remove";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 14px;
+      color: #8e4040;
+      background: linear-gradient(to left, #fdeeee, transparent 58%);
+      opacity: 0;
+      pointer-events: none;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+    .shop-item.dragging::after { opacity: 1; }
+    .shop-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+    .shop-item.checked .text {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .text {
+      min-width: 0;
+      word-break: break-word;
+      font-size: .96rem;
+    }
+    .inline-add {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+    .suggestions {
+      display: none;
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      overflow: hidden;
+    }
+    .suggestions.show { display: block; }
+    .suggestion-btn {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #eee6da;
+      background: white;
+      text-align: left;
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+    .suggestion-btn:last-child { border-bottom: 0; }
+    .suggestion-btn:hover { background: #f7f4ee; }
+
+    .ingredient-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .editor-actions, .db-actions {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .db-actions.three { grid-template-columns: repeat(3, 1fr); }
+    .file-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: inherit;
+      line-height: 1.2;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 10px;
+      cursor: pointer;
+      background: white;
+    }
+    .download-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #eef7ef;
+      border: 1px solid #cfe2d2;
+      border-radius: 12px;
+    }
+
+    .collapsed-card > summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 800;
+      user-select: none;
+    }
+    .collapsed-card > summary::-webkit-details-marker { display: none; }
+    .collapsed-card .card-inner { margin-top: 10px; }
+
+    .eff-table-head {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+    .eff-aisle-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .eff-aisle-num {
+      text-align: center;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 8px;
+      background: white;
+      color: var(--muted);
+    }
+    .eff-item-row {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee6da;
+    }
+    .eff-item-row:last-child { border-bottom: 0; }
+    .eff-item-label {
+      word-break: break-word;
+      font-size: .95rem;
+    }
+    .details-box {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      overflow: hidden;
+    }
+    .details-summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      font-weight: 800;
+      user-select: none;
+    }
+    .details-summary::-webkit-details-marker { display: none; }
+    .details-content { padding: 0 12px 10px; }
+
+    .parse-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .danger {
+      color: #8e4040;
+      border-color: #e3c3c3;
+      background: #fcf4f4;
+    }
+
+    @media (max-width: 560px) {
+      .top-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+      .inline-add,
+      .editor-actions,
+      .db-actions,
+      .db-actions.three,
+      .ingredient-row,
+      .eff-item-row,
+      .eff-aisle-row,
+      .eff-table-head,
+      .parse-actions {
+        grid-template-columns: 1fr;
+      }
+      .dinner-row-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="title">EZ-Food 2</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dinners">Dinners</button>
+      <button class="tab-btn" data-tab="shopping">Shopping</button>
+      <button class="tab-btn" data-tab="other">Other</button>
+    </div>
+
+    <section id="tab-dinners" class="panel active">
+      <div class="top-actions">
+        <button id="randomizeAllBtn" class="action-btn yellow">Randomize All</button>
+        <button id="generateBtn" class="action-btn">Create List</button>
+      </div>
+
+      <div class="card">
+        <div id="dinnerRows"></div>
+      </div>
+
+      <div class="card recipes-card">
+        <div class="section-title">Recipes</div>
+        <div id="recipeLinks" class="recipe-list"></div>
+      </div>
+    </section>
+
+    <section id="tab-shopping" class="panel">
+      <div class="card">
+        <div class="section-title">Shopping List</div>
+        <div id="shoppingList" class="shopping-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Add Item</div>
+        <div class="inline-add">
+          <input id="extraItemInput" type="text" placeholder="Add a manual item" autocomplete="off" />
+          <button id="addExtraBtn" class="ghost-btn">Add Item</button>
+        </div>
+        <div id="extraSuggestions" class="suggestions"></div>
+      </div>
+    </section>
+
+    <section id="tab-other" class="panel">
+      <details class="card collapsed-card">
+        <summary>Dinner Editor</summary>
+        <div class="card-inner">
+          <div class="muted" style="margin-bottom:8px;">Choose an existing dinner to edit, or pick New Dinner.</div>
+          <select id="editorSelect"></select>
+
+          <div style="height:10px"></div>
+          <label class="muted">Dinner Title</label>
+          <input id="editorTitle" type="text" placeholder="Dinner title" />
+
+          <div style="height:12px"></div>
+          <div class="section-title" style="font-size:.98rem;">Ingredients</div>
+          <div id="ingredientEditor"></div>
+          <button id="addIngredientBtn" class="ghost-btn" style="width:100%;margin-top:4px;">Add Ingredient</button>
+
+          <div style="height:10px"></div>
+          <label class="muted">Recipe Link</label>
+          <input id="editorRecipeLink" type="url" placeholder="https://example.com/recipe" />
+
+          <div style="height:10px"></div>
+          <label class="muted">Recipe Text</label>
+          <textarea id="editorRecipeText" placeholder="Optional plain-text recipe"></textarea>
+
+          <div style="height:12px"></div>
+          <div class="editor-actions">
+            <button id="saveDinnerBtn" class="action-btn">Save Dinner</button>
+            <button id="deleteDinnerBtn" class="ghost-btn danger">Delete Dinner</button>
+          </div>
+          <div id="editorMessage" class="message"></div>
+        </div>
+      </details>
+
+      <details class="card collapsed-card">
+        <summary>Database</summary>
+        <div class="card-inner">
+          <div class="muted" id="dbVersionText">Database Version: 2.0</div>
+          <div style="height:12px"></div>
+          <div class="db-actions three">
+            <button id="exportBtn" class="ghost-btn">Export JSON</button>
+            <label class="file-label">
+              <input id="importInput" type="file" accept=".json" style="display:none;" />
+              Import JSON
+            </label>
+            <button id="resetBtn" class="ghost-btn">Reset to Default</button>
+          </div>
+          <div style="height:8px"></div>
+          <button id="updateInternalBtn" class="action-btn" style="width:100%;">Update Internal Database</button>
+          <div id="downloadArea"></div>
+          <div id="dbMessage" class="message"></div>
+        </div>
+      </details>
+
+      <details class="card collapsed-card">
+        <summary>Efficiency</summary>
+        <div class="card-inner">
+          <div class="eff-table-head">
+            <div>Aisle</div>
+            <div>Aisle Contents</div>
+          </div>
+          <div id="aisleList"></div>
+          <button id="addAisleBtn" class="ghost-btn" style="width:100%;margin-top:4px;">Add Aisle</button>
+
+          <details class="details-box" id="uncategorizedBox" open>
+            <summary class="details-summary">Uncategorized Items</summary>
+            <div class="details-content" id="uncategorizedList"></div>
+          </details>
+
+          <details class="details-box" id="categorizedItemsBox">
+            <summary class="details-summary">Categorized Items</summary>
+            <div class="details-content" id="categorizedList"></div>
+          </details>
+
+          <div id="efficiencyMessage" class="message"></div>
+        </div>
+      </details>
+
+      <details class="card collapsed-card">
+        <summary>Experimental</summary>
+        <div class="card-inner">
+          <div class="muted" style="margin-bottom:8px;">Recipe page parser. Some sites work, some block browser fetches.</div>
+
+          <label class="muted">Recipe Link</label>
+          <input id="experimentalRecipeLink" type="url" placeholder="https://example.com/recipe" />
+
+          <div class="parse-actions">
+            <button id="experimentalParseBtn" class="ghost-btn">Parse</button>
+            <button id="experimentalSendBtn" class="ghost-btn">Send to Dinner Editor</button>
+          </div>
+
+          <div style="height:10px"></div>
+          <label class="muted">Recipe Title</label>
+          <input id="experimentalRecipeTitle" type="text" placeholder="Parsed recipe title will appear here" />
+
+          <div style="height:10px"></div>
+          <label class="muted">Recipe Text</label>
+          <textarea id="experimentalRecipeText" placeholder="Parsed recipe text will appear here"></textarea>
+
+          <div style="height:12px"></div>
+          <div class="section-title" style="font-size:.98rem;">Ingredients</div>
+          <div id="experimentalIngredientEditor"></div>
+          <button id="experimentalAddIngredientBtn" class="ghost-btn" style="width:100%;margin-top:4px;">Add Ingredient</button>
+
+          <div id="experimentalMessage" class="message"></div>
+        </div>
+      </details>
+    </section>
+  </div>
+
+<script>
+const APP_TITLE = "EZ-Food 2";
+const DEFAULT_VERSION = "2.0";
+const STORAGE_KEY = "ez-food-2-state";
+const DEFAULT_DINNERS = [
+  {
+    "id": "lentil-soup",
+    "name": "Lentil Soup",
+    "recipe": "1-Pot Vegan Lentil Soup | Minimalist Baker Recipes",
+    "recipeLink": "",
+    "ingredients": [
+      "4 Large Carrots",
+      "4 Stalks Celery",
+      "3 cups baby potatoes",
+      "1/2 onion",
+      "2 cups chopped kale",
+      "6 cups veggie broth",
+      "1 cup green or brown lentils",
+      "Rosemary",
+      "Thyme"
+    ]
+  },
+  {
+    "id": "mushroom-fettucini",
+    "name": "Mushroom Fettucini",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Parmesean",
+      "Fettucine",
+      "2.5 cups veggies broth",
+      "8oz Baby Bella Mushrooms",
+      "Heavy Cream"
+    ]
+  },
+  {
+    "id": "hot-dogs-and-beans",
+    "name": "Hot Dogs and Beans",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Hot Dogs",
+      "Hot Dog Buns",
+      "Tater Tots",
+      "Beans"
+    ]
+  },
+  {
+    "id": "vegetarian-chilli",
+    "name": "Vegetarian Chilli",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "19oz Can Black Bean Soup",
+      "15oz Kidney Beans",
+      "15oz Can Garbanzo Beans",
+      "16oz Baked Beans",
+      "15oz Can Chopped Tomatoes",
+      "1 Large Onion",
+      "1 Green Bell Pepper",
+      "2 Stalks Celery",
+      "1 Can Corn",
+      "1 Packet chili spices"
+    ]
+  },
+  {
+    "id": "gurstenne-soup",
+    "name": "Gurstenne Soup",
+    "recipe": "Gerstensuppe",
+    "recipeLink": "",
+    "ingredients": [
+      "1 Large Onion",
+      "1 Leek",
+      "3 Medium Carrots",
+      "3 Celery Stalks",
+      "1 Bay Leaf",
+      "5oz Smoked Bacon",
+      "8 Cups Chicken Stock",
+      "Pearl Barley",
+      "2 Russet Potatoes",
+      "1 Cup Cream"
+    ]
+  },
+  {
+    "id": "spaghetti-and-meatball",
+    "name": "Spaghetti and Meatball",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Spaghetti",
+      "Frozen Meatballs",
+      "Vegetarian Tomato Sauce"
+    ]
+  },
+  {
+    "id": "lemon-garlic-kale-salad",
+    "name": "Lemon Garlic Kale Salad",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "1/2 Cup Nuts",
+      "1 Large Kale Bunch",
+      "Parmesean",
+      "1 Large Lemon"
+    ]
+  },
+  {
+    "id": "strawberry-spinach-salad",
+    "name": "Strawberry Spinach Salad",
+    "recipe": "Spinach Strawberry Salad",
+    "recipeLink": "",
+    "ingredients": [
+      "1lb Strawberries",
+      "Feta Cheese",
+      "1/4 Red Onion",
+      "Pecans",
+      "11oz Baby Spinach",
+      "Balsmaic Vineagar",
+      "Olive Oil",
+      "Maple Syrup"
+    ]
+  },
+  {
+    "id": "avocado-toast",
+    "name": "Avocado Toast",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Sandwich Bread (4)",
+      "2 Avocados",
+      "Cherry Tomatoes",
+      "Balsamic Glaze",
+      "Feta Cheese"
+    ]
+  },
+  {
+    "id": "grilled-cheese-with-tomato-soup",
+    "name": "Grilled Cheese with Tomato Soup",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Sandwich Bread (4)",
+      "Cheese Sample",
+      "Tomato Soup"
+    ]
+  },
+  {
+    "id": "panini",
+    "name": "Panini",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Sandwich Bread (4)",
+      "Panini Cheese Choice",
+      "1 Tomato",
+      "1 Large Onion"
+    ]
+  },
+  {
+    "id": "cesar-salad",
+    "name": "Cesar Salad",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Iceberg Lettuce",
+      "Roma Tomatoes",
+      "Cesar Dressing",
+      "Parmesean"
+    ]
+  },
+  {
+    "id": "frozen-pizza",
+    "name": "Frozen Pizza",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Frozen Pizza"
+    ]
+  },
+  {
+    "id": "jackfruit-chicken-quesidillas",
+    "name": "Jackfruit/Chicken Quesidillas",
+    "recipe": "",
+    "recipeLink": "https://itdoesnttastelikechicken.com/easy-vegan-jackfruit-tacos/",
+    "ingredients": [
+      "1 Can Jackfruit (green ideally)",
+      "Some chicken",
+      "Fajita Spice Packet",
+      "1 Large Onion",
+      "Salsa",
+      "Mexican Cheese",
+      "Tortillas"
+    ]
+  },
+  {
+    "id": "pesto-egg-salad",
+    "name": "Pesto Egg Salad",
+    "recipe": "Pesto Egg Salad",
+    "recipeLink": "",
+    "ingredients": [
+      "6 Eggs",
+      "Mayo",
+      "2 cups basil",
+      "Parmesean",
+      "garlic",
+      "green onions"
+    ]
+  },
+  {
+    "id": "creamy-bean-burritos",
+    "name": "Creamy Bean Burritos",
+    "recipe": "Cheesy Beam Burritos",
+    "recipeLink": "",
+    "ingredients": [
+      "1 can Rotel Diced Tomatoes and Green Chillies",
+      "1 Can Black Beans",
+      "1 can pinto beans",
+      "1 packet taco seasoning",
+      "8oz Cream cheese",
+      "Mexican Cheese",
+      "Tortillas"
+    ]
+  },
+  {
+    "id": "enchillda-pasta",
+    "name": "Enchillda Pasta",
+    "recipe": "Enchilada Soup",
+    "recipeLink": "",
+    "ingredients": [
+      "8oz chickpea pasta",
+      "2.5 cups red enchillada sauce",
+      "1 cup refried beans",
+      "1 cup crushed tomatoes",
+      "2 cups veggie broth",
+      "1 cup corn",
+      "2 cups black beans",
+      "chili powder",
+      "cumin",
+      "cheese to top",
+      "1 Large Onion"
+    ]
+  },
+  {
+    "id": "butternut-squash-soup",
+    "name": "Butternut Squash Soup",
+    "recipe": "Butternut Squash Soup: Everything goes in the pot, low boil for 30 minutes. Let cool a bit, put in blender until smooth, Reheat as neccesary.",
+    "recipeLink": "",
+    "ingredients": [
+      "1 clove garlic",
+      "4T butta",
+      "1 Butternut Squash, peeled and cut into 1/2\" rings",
+      "1/2 cup chopped apricots or apples",
+      "4C chicken or veggie broth",
+      "1 tsp Curry powder",
+      "Cinnamon",
+      "Clove",
+      "Salt",
+      "Pepper"
+    ]
+  },
+  {
+    "id": "potato-soup",
+    "name": "Potato Soup",
+    "recipe": "Creamy Potato Soup",
+    "recipeLink": "",
+    "ingredients": [
+      "6 strips bacon",
+      "1 Large Onion",
+      "2.5 pounds golden potatoes",
+      "4 cups chicken broth",
+      "Milk",
+      "Heavy Cream"
+    ]
+  },
+  {
+    "id": "mac-and-cheese",
+    "name": "Mac and Cheese!",
+    "recipe": "Mac and Cheese: See Obsidian",
+    "recipeLink": "",
+    "ingredients": [
+      "Macaroni Noodles",
+      "1cup Mozz Cheese",
+      "Velveeta",
+      "Flour",
+      "Planko Bread Crumbs",
+      "Heavy Cream"
+    ]
+  },
+  {
+    "id": "spinach-and-mushroom-quesidillas",
+    "name": "Spinach and Mushroom Quesidillas",
+    "recipe": "Spinach and Mushroom Quesidillas",
+    "recipeLink": "",
+    "ingredients": [
+      "8oz Mushrooms",
+      "1/2lb Spinach",
+      "8oz Mozzarella",
+      "7in Flour Tortillas",
+      "Sour Cream"
+    ]
+  },
+  {
+    "id": "eggs-pineapple-ham-and-toast",
+    "name": "Eggs, Pineapple Ham and Toast",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Eggs",
+      "Ham",
+      "Canned Pineapple",
+      "Bread",
+      "Holly's vegy Sausages"
+    ]
+  },
+  {
+    "id": "sweet-potato-burritos",
+    "name": "Sweet Potato Burritos",
+    "recipe": "Sweet Potato Burritos",
+    "recipeLink": "",
+    "ingredients": [
+      "2 Medium Sweet potatoes",
+      "1 Large Onion",
+      "1 can diced tomatoes",
+      "1 Can Black Beans",
+      "1 avocado",
+      "Full Fat Sour Cream",
+      "wraps",
+      "1 lime",
+      "oregano",
+      "cumin",
+      "paprika"
+    ]
+  },
+  {
+    "id": "burgers",
+    "name": "Burgers!",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Angus Frozen Hamburger",
+      "Hamburger Buns",
+      "Lettuce",
+      "Tomato",
+      "1 Large Onion"
+    ]
+  },
+  {
+    "id": "crunchwrap-supreme",
+    "name": "Crunchwrap Supreme",
+    "recipe": "Crunchwrap Supreme",
+    "recipeLink": "",
+    "ingredients": [
+      "The Biggest Flour Wraps",
+      "The Smallest Flour Wraps",
+      "Rotissere Chicken, Shredded",
+      "Salsa",
+      "Mexican Cheese",
+      "Tostada or Tortilla Chips"
+    ]
+  },
+  {
+    "id": "homemade-meat-sauce-and-spaghetti",
+    "name": "Homemade Meat Sauce and Spaghetti",
+    "recipe": "Italian Meat Sauce",
+    "recipeLink": "",
+    "ingredients": [
+      "1 Large Onion",
+      "2 Lbs Ground Beef",
+      "5 Cloves Garlic",
+      "2 tsp granulated garlic",
+      "2 tsp salt",
+      "1 tsp salt",
+      "4 tablespoons tomato paste",
+      "28 Ounce Can Ground Peeled Tomatos",
+      "28 Ounce Tomato Puree",
+      "2 tbsp basil",
+      "2 tbsp sugar",
+      "Spaghetti"
+    ]
+  },
+  {
+    "id": "nachos",
+    "name": "Nachos",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "1 Bag Tortilla Chips",
+      "Ground Beef",
+      "Salsa",
+      "Cheese",
+      "1 White Onion",
+      "1 Red Pepper",
+      "1 Green Pepper",
+      "1 Pckg. Cherry Tomatoes",
+      "1 Can Jackfruit"
+    ]
+  },
+  {
+    "id": "froot-salad",
+    "name": "Froot Salad",
+    "recipe": "",
+    "recipeLink": "",
+    "ingredients": [
+      "Watermelon",
+      "Grapes",
+      "Cantelope",
+      "Strawberries",
+      "Bluberries"
+    ]
+  },
+  {
+    "id": "chicken-and-veggie-pan-roast",
+    "name": "Chicken and Veggie Pan Roast",
+    "recipe": "Chicken Veggie Roast",
+    "recipeLink": "",
+    "ingredients": [
+      "1.5 lb chicken breasts",
+      "3 medium red potatoes",
+      "1 red onion",
+      "fresh green beans",
+      "2 carrots",
+      "Mayo",
+      "Dijon Mustard",
+      "Yellow Mustard",
+      "Honey"
+    ]
+  },
+  {
+    "id": "marry-me-chicken",
+    "name": "Marry Me Chicken",
+    "recipe": "Marry Me Chicken - Little Sunny Kitchen",
+    "recipeLink": "",
+    "ingredients": [
+      "3 large chicken breasts (or 6 chicken cutlets)",
+      "Chicken Broth",
+      "Heavy Cream",
+      "grated parmesean",
+      "chili flakes",
+      "oregano",
+      "thyme",
+      "Sundried Tomatoes",
+      "Fresh Basil Leaves",
+      "garlic",
+      "olive oil",
+      "flour"
+    ]
+  }
+];
+const DEFAULT_SELECTED_IDS = [DEFAULT_DINNERS[0]?.id || "", DEFAULT_DINNERS[1]?.id || "", DEFAULT_DINNERS[2]?.id || ""];
+const DEFAULT_APP_DATA = {
+  dinners: DEFAULT_DINNERS,
+  aisles: Array.from({ length: 20 }, (_, i) => ({
+    id: "aisle-" + (i + 1),
+    number: i + 1,
+    descriptor: ""
+  })),
+  visibleAisles: 5,
+  ingredientAisleMap: {},
+  manualItemLibrary: [],
+  extraItems: [],
+  checkedMap: {},
+  selectedDinnerIds: DEFAULT_SELECTED_IDS,
+  generated: false,
+  databaseVersion: DEFAULT_VERSION
+};
+
+let state = loadState();
+
+const dinnerRows = document.getElementById("dinnerRows");
+const recipeLinks = document.getElementById("recipeLinks");
+const shoppingList = document.getElementById("shoppingList");
+const extraItemInput = document.getElementById("extraItemInput");
+const extraSuggestions = document.getElementById("extraSuggestions");
+const editorSelect = document.getElementById("editorSelect");
+const ingredientEditor = document.getElementById("ingredientEditor");
+const editorMessage = document.getElementById("editorMessage");
+const dbMessage = document.getElementById("dbMessage");
+const dbVersionText = document.getElementById("dbVersionText");
+const downloadArea = document.getElementById("downloadArea");
+const aisleList = document.getElementById("aisleList");
+const uncategorizedList = document.getElementById("uncategorizedList");
+const categorizedList = document.getElementById("categorizedList");
+const efficiencyMessage = document.getElementById("efficiencyMessage");
+const experimentalRecipeLink = document.getElementById("experimentalRecipeLink");
+const experimentalRecipeTitle = document.getElementById("experimentalRecipeTitle");
+const experimentalRecipeText = document.getElementById("experimentalRecipeText");
+const experimentalIngredientEditor = document.getElementById("experimentalIngredientEditor");
+const experimentalMessage = document.getElementById("experimentalMessage");
+
+function deepClone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "dinner";
+}
+
+function normalizeText(text) {
+  return String(text || "").toLowerCase().trim().replace(/\s+/g, " ");
+}
+
+function isLikelyUrl(value) {
+  try {
+    const u = new URL(String(value || "").trim());
+    return ["http:", "https:"].includes(u.protocol);
+  } catch (e) {
+    return false;
+  }
+}
+
+function getDinnerById(id) {
+  return state.dinners.find(d => d.id === id) || null;
+}
+
+function getAisleByNumber(num) {
+  return state.aisles.find(a => a.number === Number(num)) || null;
+}
+
+function getAisleColor(num) {
+  return getComputedStyle(document.documentElement).getPropertyValue("--aisle-" + num).trim() || "";
+}
+
+function migrateState(raw) {
+  const base = deepClone(DEFAULT_APP_DATA);
+  const incoming = raw && typeof raw === "object" ? raw : {};
+  const merged = { ...base, ...incoming };
+  merged.dinners = Array.isArray(incoming.dinners) && incoming.dinners.length ? incoming.dinners : deepClone(DEFAULT_DINNERS);
+  merged.selectedDinnerIds = Array.isArray(incoming.selectedDinnerIds) && incoming.selectedDinnerIds.length ? incoming.selectedDinnerIds.slice(0,3) : deepClone(DEFAULT_SELECTED_IDS);
+  while (merged.selectedDinnerIds.length < 3) merged.selectedDinnerIds.push("");
+  merged.extraItems = Array.isArray(incoming.extraItems) ? incoming.extraItems : [];
+  merged.manualItemLibrary = Array.isArray(incoming.manualItemLibrary) ? incoming.manualItemLibrary : [];
+  merged.checkedMap = incoming.checkedMap && typeof incoming.checkedMap === "object" ? incoming.checkedMap : {};
+  merged.generated = !!incoming.generated;
+  merged.databaseVersion = incoming.databaseVersion || DEFAULT_VERSION;
+
+  const defaultAisles = deepClone(DEFAULT_APP_DATA.aisles);
+  if (Array.isArray(incoming.aisles) && incoming.aisles.length) {
+    merged.aisles = defaultAisles.map(def => {
+      const found = incoming.aisles.find(a => Number(a.number) === def.number || a.id === def.id);
+      return {
+        id: def.id,
+        number: def.number,
+        descriptor: found && typeof found.descriptor === "string" ? found.descriptor : ""
+      };
+    });
+  } else if (Array.isArray(incoming.categories) && incoming.categories.length) {
+    merged.aisles = defaultAisles.map(def => {
+      const found = incoming.categories.find(c => Number(c.order) === def.number);
+      return {
+        id: def.id,
+        number: def.number,
+        descriptor: found && typeof found.name === "string" ? found.name : ""
+      };
+    });
+  } else {
+    merged.aisles = defaultAisles;
+  }
+
+  merged.visibleAisles = Math.min(20, Math.max(5, Number(incoming.visibleAisles) || 5));
+
+  const map = {};
+  if (incoming.ingredientAisleMap && typeof incoming.ingredientAisleMap === "object") {
+    Object.assign(map, incoming.ingredientAisleMap);
+  } else if (incoming.ingredientCategoryMap && typeof incoming.ingredientCategoryMap === "object") {
+    Object.entries(incoming.ingredientCategoryMap).forEach(([item, catId]) => {
+      if (typeof catId === "string" && catId.startsWith("cat-")) {
+        const num = Number(catId.split("cat-")[1]);
+        if (num >= 1 && num <= 20) map[item] = num;
+      }
+    });
+  }
+  merged.ingredientAisleMap = map;
+  return merged;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return migrateState({});
+    return migrateState(JSON.parse(raw));
+  } catch (e) {
+    return migrateState({});
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tabName));
+  document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("active", panel.id === "tab-" + tabName));
+}
+
+function getAllKnownItemTexts() {
+  const set = new Set();
+  state.dinners.forEach(d => (d.ingredients || []).forEach(item => {
+    const text = String(item || "").trim();
+    if (text) set.add(text);
+  }));
+  state.extraItems.forEach(item => {
+    const text = String(item.text || "").trim();
+    if (text) set.add(text);
+  });
+  state.manualItemLibrary.forEach(item => {
+    const text = String(item || "").trim();
+    if (text) set.add(text);
+  });
+  return [...set].sort((a, b) => a.localeCompare(b));
+}
+
+function buildSuggestionPool() {
+  const seen = new Set();
+  const pool = [];
+  getAllKnownItemTexts().forEach(item => {
+    const key = normalizeText(item);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    pool.push(item);
+  });
+  return pool;
+}
+
+function getSuggestions(query) {
+  const q = normalizeText(query);
+  if (q.length < 2) return [];
+  const pool = buildSuggestionPool();
+  const results = pool
+    .map(text => {
+      const norm = normalizeText(text);
+      let score = 999;
+      if (norm.startsWith(q)) score = 0;
+      else if (norm.includes(q)) score = 1;
+      else {
+        const tokens = norm.split(/\s+/);
+        if (tokens.some(t => t.startsWith(q))) score = 2;
+      }
+      return { text, score };
+    })
+    .filter(x => x.score < 999)
+    .sort((a,b) => a.score - b.score || a.text.localeCompare(b.text))
+    .slice(0, 8)
+    .map(x => x.text);
+  return results;
+}
+
+function renderSuggestions(query) {
+  const results = getSuggestions(query);
+  extraSuggestions.innerHTML = "";
+  if (!results.length) {
+    extraSuggestions.classList.remove("show");
+    return;
+  }
+  results.forEach(text => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "suggestion-btn";
+    btn.textContent = text;
+    btn.addEventListener("click", () => {
+      extraItemInput.value = text;
+      addExtraItem();
+    });
+    extraSuggestions.appendChild(btn);
+  });
+  extraSuggestions.classList.add("show");
+}
+
+function createIngredientInput(value = "") {
+  const row = document.createElement("div");
+  row.className = "ingredient-row";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = value;
+  input.placeholder = "Ingredient";
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "ghost-btn danger";
+  remove.textContent = "Remove";
+  remove.addEventListener("click", () => row.remove());
+  row.appendChild(input);
+  row.appendChild(remove);
+  return row;
+}
+
+function renderEditorSelect() {
+  editorSelect.innerHTML = "";
+  const newOpt = document.createElement("option");
+  newOpt.value = "__new__";
+  newOpt.textContent = "New Dinner";
+  editorSelect.appendChild(newOpt);
+
+  state.dinners
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = d.name;
+      editorSelect.appendChild(opt);
+    });
+}
+
+function loadEditor(value) {
+  const dinner = value === "__new__" ? null : getDinnerById(value);
+  document.getElementById("editorTitle").value = dinner?.name || "";
+  document.getElementById("editorRecipeLink").value = dinner?.recipeLink || "";
+  document.getElementById("editorRecipeText").value = dinner?.recipe || "";
+  ingredientEditor.innerHTML = "";
+  const ingredients = dinner ? (dinner.ingredients || []) : ["", "", "", "", ""];
+  ingredients.forEach(item => ingredientEditor.appendChild(createIngredientInput(item)));
+  editorMessage.textContent = "";
+}
+
+function renderDinnerRows() {
+  dinnerRows.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    const slot = document.createElement("div");
+    slot.className = "dinner-slot";
+
+    const wrap = document.createElement("div");
+    wrap.className = "slot-machine";
+
+    const select = document.createElement("select");
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Choose dinner";
+    select.appendChild(blank);
+
+    state.dinners
+      .slice()
+      .sort((a,b) => a.name.localeCompare(b.name))
+      .forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.textContent = d.name;
+        if (state.selectedDinnerIds[i] === d.id) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+    select.addEventListener("change", () => {
+      state.selectedDinnerIds[i] = select.value;
+      saveState();
+      renderRecipes();
+      if (state.generated) renderShoppingList();
+    });
+
+    wrap.appendChild(select);
+    slot.appendChild(wrap);
+
+    const actions = document.createElement("div");
+    actions.className = "dinner-row-actions";
+
+    const randomBtn = document.createElement("button");
+    randomBtn.type = "button";
+    randomBtn.className = "mini-btn yellow";
+    randomBtn.textContent = "Random";
+    randomBtn.addEventListener("click", () => spinDinnerSlot(i, wrap, select));
+
+    const clearBtn = document.createElement("button");
+    clearBtn.type = "button";
+    clearBtn.className = "mini-btn red";
+    clearBtn.textContent = "Clear";
+    clearBtn.addEventListener("click", () => {
+      state.selectedDinnerIds[i] = "";
+      saveState();
+      renderDinnerRows();
+      renderRecipes();
+      if (state.generated) renderShoppingList();
+    });
+
+    actions.appendChild(randomBtn);
+    actions.appendChild(clearBtn);
+    slot.appendChild(actions);
+    dinnerRows.appendChild(slot);
+  }
+}
+
+function getRandomDinnerId(excludeId = "") {
+  const options = state.dinners.map(d => d.id).filter(Boolean);
+  if (!options.length) return "";
+  if (options.length === 1) return options[0];
+  let pick = excludeId;
+  while (pick === excludeId) {
+    pick = options[Math.floor(Math.random() * options.length)];
+  }
+  return pick;
+}
+
+function spinDinnerSlot(index, wrapEl, selectEl) {
+  const options = state.dinners.map(d => d.id).filter(Boolean);
+  if (!options.length) return Promise.resolve();
+  wrapEl.classList.add("spinning");
+  let steps = 12;
+  return new Promise(resolve => {
+    const timer = setInterval(() => {
+      const temp = options[Math.floor(Math.random() * options.length)];
+      selectEl.value = temp;
+      steps--;
+      if (steps <= 0) {
+        clearInterval(timer);
+        const finalId = getRandomDinnerId(state.selectedDinnerIds[index]);
+        state.selectedDinnerIds[index] = finalId;
+        selectEl.value = finalId;
+        wrapEl.classList.remove("spinning");
+        saveState();
+        renderRecipes();
+        if (state.generated) renderShoppingList();
+        resolve();
+      }
+    }, 85);
+  });
+}
+
+async function spinAllSlots() {
+  const wraps = [...document.querySelectorAll(".slot-machine")];
+  const selects = [...document.querySelectorAll("#dinnerRows select")];
+  await Promise.all(wraps.map((wrap, i) => spinDinnerSlot(i, wrap, selects[i])));
+}
+
+function renderRecipes() {
+  recipeLinks.innerHTML = "";
+  const selected = state.selectedDinnerIds.map(getDinnerById).filter(Boolean);
+
+  if (!selected.length) {
+    recipeLinks.innerHTML = '<div class="recipe-state static empty">No dinners selected.</div>';
+    return;
+  }
+
+  selected.forEach(d => {
+    const recipeText = String(d.recipe || "").trim();
+    const recipeLink = String(d.recipeLink || "").trim();
+
+    if (isLikelyUrl(recipeLink)) {
+      const wrap = document.createElement("div");
+      wrap.className = "recipe-state link";
+      const a = document.createElement("a");
+      a.href = recipeLink;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = d.name;
+      wrap.appendChild(a);
+      recipeLinks.appendChild(wrap);
+      return;
+    }
+
+    if (recipeText) {
+      const wrap = document.createElement("div");
+      wrap.className = "recipe-state recipe-accordion";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "recipe-accordion-btn";
+      btn.innerHTML = '<span>' + escapeHtml(d.name) + '</span><span class="arrow">▾</span>';
+      const body = document.createElement("div");
+      body.className = "recipe-accordion-body";
+      body.textContent = recipeText;
+      btn.addEventListener("click", () => wrap.classList.toggle("open"));
+      wrap.appendChild(btn);
+      wrap.appendChild(body);
+      recipeLinks.appendChild(wrap);
+      return;
+    }
+
+    const empty = document.createElement("div");
+    empty.className = "recipe-state static empty";
+    empty.textContent = d.name;
+    recipeLinks.appendChild(empty);
+  });
+}
+
+function buildShoppingEntries() {
+  const counts = new Map();
+  state.selectedDinnerIds.map(getDinnerById).filter(Boolean).forEach(d => {
+    (d.ingredients || []).forEach(item => {
+      const text = String(item || "").trim();
+      if (!text) return;
+      counts.set(text, (counts.get(text) || 0) + 1);
+    });
+  });
+
+  const generatedItems = [...counts.entries()].map(([text, count]) => {
+    const label = count > 1 ? `${text} (x${count})` : text;
+    const aisleNum = Number(state.ingredientAisleMap[text] || 0);
+    return {
+      key: "gen::" + text,
+      text: label,
+      rawText: text,
+      sourceType: "generated",
+      aisleNum: aisleNum || 999,
+      checked: !!state.checkedMap["gen::" + text]
+    };
+  });
+
+  const manualItems = state.extraItems.map(item => {
+    const aisleNum = Number(state.ingredientAisleMap[item.text] || 0);
+    return {
+      key: "extra::" + item.id,
+      text: item.text,
+      rawText: item.text,
+      sourceType: "manual",
+      aisleNum: aisleNum || 0,
+      checked: !!state.checkedMap["extra::" + item.id]
+    };
+  });
+
+  const sorter = (a, b) => {
+    if (a.checked !== b.checked) return a.checked ? 1 : -1;
+    if (a.sourceType !== b.sourceType) return a.sourceType === "manual" ? -1 : 1;
+    if (a.aisleNum !== b.aisleNum) return a.aisleNum - b.aisleNum;
+    return a.rawText.localeCompare(b.rawText);
+  };
+
+  return [...manualItems, ...generatedItems].sort(sorter);
+}
+
+function attachSwipeToRemove(row, itemKey) {
+  let startX = 0;
+  let currentX = 0;
+  let dragging = false;
+
+  const onStart = (clientX) => {
+    startX = clientX;
+    currentX = clientX;
+    dragging = true;
+  };
+  const onMove = (clientX) => {
+    if (!dragging) return;
+    currentX = clientX;
+    const dx = currentX - startX;
+    if (dx < 0) {
+      row.style.transform = `translateX(${Math.max(dx, -120)}px)`;
+      row.classList.add("dragging");
+    }
+  };
+  const onEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    const dx = currentX - startX;
+    row.classList.remove("dragging");
+    if (dx < -90) {
+      const id = itemKey.split("extra::")[1];
+      state.extraItems = state.extraItems.filter(x => x.id !== id);
+      delete state.checkedMap[itemKey];
+      saveState();
+      renderShoppingList();
+      return;
+    }
+    row.style.transform = "translateX(0)";
+  };
+
+  row.addEventListener("touchstart", e => onStart(e.touches[0].clientX), { passive: true });
+  row.addEventListener("touchmove", e => onMove(e.touches[0].clientX), { passive: true });
+  row.addEventListener("touchend", onEnd);
+  row.addEventListener("pointerdown", e => onStart(e.clientX));
+  row.addEventListener("pointermove", e => { if (dragging) onMove(e.clientX); });
+  row.addEventListener("pointerup", onEnd);
+  row.addEventListener("pointercancel", onEnd);
+}
+
+function renderShoppingList() {
+  shoppingList.innerHTML = "";
+  if (!state.generated) {
+    shoppingList.innerHTML = '<div class="muted">Tap Create List to start a fresh shopping trip.</div>';
+    return;
+  }
+  const items = buildShoppingEntries();
+  if (!items.length) {
+    shoppingList.innerHTML = '<div class="muted">Your shopping list is empty.</div>';
+    return;
+  }
+
+  items.forEach(item => {
+    const row = document.createElement("label");
+    row.className = "shop-item";
+    if (item.sourceType === "manual") row.classList.add("extra");
+    if (item.checked) row.classList.add("checked");
+
+    const tint = item.aisleNum >= 1 && item.aisleNum <= 20 ? getAisleColor(item.aisleNum) : "";
+    if (tint) row.style.background = tint;
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = item.checked;
+    cb.addEventListener("change", () => {
+      state.checkedMap[item.key] = cb.checked;
+      saveState();
+      renderShoppingList();
+    });
+
+    const text = document.createElement("div");
+    text.className = "text";
+    text.textContent = item.text;
+
+    row.appendChild(cb);
+    row.appendChild(text);
+
+    if (item.sourceType === "manual") {
+      attachSwipeToRemove(row, item.key);
+    }
+
+    shoppingList.appendChild(row);
+  });
+}
+
+function addExtraItem() {
+  const text = extraItemInput.value.trim();
+  if (!text) return;
+  state.extraItems.push({
+    id: String(Date.now()) + "-" + Math.random().toString(36).slice(2,7),
+    text
+  });
+  const normalized = normalizeText(text);
+  if (normalized && !state.manualItemLibrary.some(x => normalizeText(x) === normalized)) {
+    state.manualItemLibrary.push(text);
+  }
+  extraItemInput.value = "";
+  extraSuggestions.classList.remove("show");
+  saveState();
+  renderShoppingList();
+}
+
+function startFreshTrip() {
+  state.checkedMap = {};
+  state.extraItems = [];
+  state.generated = true;
+  extraItemInput.value = "";
+  extraSuggestions.classList.remove("show");
+  saveState();
+}
+
+function renderAisleList() {
+  aisleList.innerHTML = "";
+  const visible = Math.min(20, Math.max(5, Number(state.visibleAisles) || 5));
+  for (let num = 1; num <= visible; num++) {
+    const aisle = getAisleByNumber(num);
+    const row = document.createElement("div");
+    row.className = "eff-aisle-row";
+
+    const numBox = document.createElement("div");
+    numBox.className = "eff-aisle-num";
+    numBox.textContent = String(num);
+    const tint = getAisleColor(num);
+    if (tint) numBox.style.background = tint;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Describe aisle " + num;
+    input.value = aisle?.descriptor || "";
+    input.addEventListener("input", () => {
+      if (aisle) aisle.descriptor = input.value;
+      saveState();
+    });
+
+    row.appendChild(numBox);
+    row.appendChild(input);
+    aisleList.appendChild(row);
+  }
+}
+
+function buildEfficiencyBuckets() {
+  const knownItems = getAllKnownItemTexts();
+  const uncategorized = [];
+  const categorized = [];
+  knownItems.forEach(text => {
+    const aisleNum = Number(state.ingredientAisleMap[text] || 0);
+    const item = { text, aisleNum };
+    if (aisleNum >= 1 && aisleNum <= 20) categorized.push(item);
+    else uncategorized.push(item);
+  });
+  uncategorized.sort((a,b) => a.text.localeCompare(b.text));
+  categorized.sort((a,b) => a.aisleNum - b.aisleNum || a.text.localeCompare(b.text));
+  return { uncategorized, categorized };
+}
+
+function createAisleSelect(selectedNum = "", allowBlank = true) {
+  const select = document.createElement("select");
+  if (allowBlank) {
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Aisle";
+    select.appendChild(blank);
+  }
+  for (let i = 1; i <= Math.max(5, state.visibleAisles); i++) {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = String(i);
+    if (String(selectedNum) === String(i)) opt.selected = true;
+    select.appendChild(opt);
+  }
+  return select;
+}
+
+function renderEfficiency() {
+  renderAisleList();
+  const { uncategorized, categorized } = buildEfficiencyBuckets();
+  uncategorizedList.innerHTML = "";
+  categorizedList.innerHTML = "";
+
+  if (!uncategorized.length) {
+    uncategorizedList.innerHTML = '<div class="muted">No uncategorized items right now.</div>';
+  } else {
+    uncategorized.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "eff-item-row";
+
+      const label = document.createElement("div");
+      label.className = "eff-item-label";
+      label.textContent = item.text;
+
+      const select = createAisleSelect("", true);
+      select.addEventListener("change", () => {
+        if (select.value) state.ingredientAisleMap[item.text] = Number(select.value);
+        else delete state.ingredientAisleMap[item.text];
+        saveState();
+        renderEfficiency();
+        if (state.generated) renderShoppingList();
+      });
+
+      row.appendChild(label);
+      row.appendChild(select);
+      uncategorizedList.appendChild(row);
+    });
+  }
+
+  if (!categorized.length) {
+    categorizedList.innerHTML = '<div class="muted">Nothing categorized yet.</div>';
+  } else {
+    categorized.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "eff-item-row";
+      const tint = getAisleColor(item.aisleNum);
+      if (tint) {
+        row.style.background = tint;
+        row.style.borderRadius = "12px";
+        row.style.padding = "10px";
+        row.style.marginBottom = "8px";
+        row.style.borderBottom = "0";
+      }
+
+      const label = document.createElement("div");
+      label.className = "eff-item-label";
+      label.textContent = item.text;
+
+      const select = createAisleSelect(item.aisleNum, true);
+      select.addEventListener("change", () => {
+        if (select.value) state.ingredientAisleMap[item.text] = Number(select.value);
+        else delete state.ingredientAisleMap[item.text];
+        saveState();
+        renderEfficiency();
+        if (state.generated) renderShoppingList();
+      });
+
+      row.appendChild(label);
+      row.appendChild(select);
+      categorizedList.appendChild(row);
+    });
+  }
+
+  efficiencyMessage.textContent = "";
+}
+
+function extractJsonLdRecipesFromHtml(html) {
+  const matches = [...html.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  const objects = [];
+
+  const visit = (node) => {
+    if (!node) return;
+    if (Array.isArray(node)) return node.forEach(visit);
+    if (typeof node !== "object") return;
+    const type = node["@type"];
+    const types = Array.isArray(type) ? type : [type];
+    if (types.some(t => String(t).toLowerCase() === "recipe")) objects.push(node);
+    if (node["@graph"]) visit(node["@graph"]);
+  };
+
+  for (const match of matches) {
+    const raw = (match[1] || "").trim();
+    if (!raw) continue;
+    try {
+      visit(JSON.parse(raw));
+    } catch (e) {
+      throw new Error("Parser Error");
+    }
+  }
+  return objects;
+}
+
+function flattenInstructions(instructions) {
+  if (!instructions) return "";
+  if (typeof instructions === "string") return instructions.trim();
+  if (Array.isArray(instructions)) return instructions.map(flattenInstructions).filter(Boolean).join("\n\n");
+  if (typeof instructions === "object") {
+    if (typeof instructions.text === "string") return instructions.text.trim();
+    if (Array.isArray(instructions.itemListElement)) return instructions.itemListElement.map(flattenInstructions).filter(Boolean).join("\n\n");
+  }
+  return "";
+}
+
+async function parseRecipeFromUrl(url) {
+  let response;
+  try {
+    response = await fetch(url);
+  } catch (err) {
+    throw new Error("CORS Error");
+  }
+  if (!response.ok) {
+    throw new Error("Parser Error");
+  }
+  const html = await response.text();
+  let recipes = [];
+  try {
+    recipes = extractJsonLdRecipesFromHtml(html);
+  } catch (err) {
+    throw new Error(err.message === "Parser Error" ? "Parser Error" : "Parser Error");
+  }
+  if (!recipes.length) {
+    throw new Error("Parser Error");
+  }
+
+  const recipe = recipes
+    .map(r => ({
+      node: r,
+      score: Array.isArray(r.recipeIngredient) ? r.recipeIngredient.length : 0
+    }))
+    .sort((a,b) => b.score - a.score)[0].node;
+
+  const ingredients = Array.isArray(recipe.recipeIngredient)
+    ? recipe.recipeIngredient.map(x => String(x || "").trim()).filter(Boolean)
+    : [];
+
+  return {
+    title: String(recipe.name || "").trim(),
+    ingredients,
+    recipeText: flattenInstructions(recipe.recipeInstructions)
+  };
+}
+
+function renderExperimentalIngredients(items = []) {
+  experimentalIngredientEditor.innerHTML = "";
+  const values = items.length ? items : ["", "", "", "", ""];
+  values.forEach(item => experimentalIngredientEditor.appendChild(createIngredientInput(item)));
+}
+
+function sendExperimentalToEditor() {
+  const title = experimentalRecipeTitle.value.trim();
+  const link = experimentalRecipeLink.value.trim();
+  const recipe = experimentalRecipeText.value.trim();
+  const ingredients = [...experimentalIngredientEditor.querySelectorAll("input")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
+  switchTab("other");
+  document.querySelectorAll(".collapsed-card")[0].open = true;
+  renderEditorSelect();
+  editorSelect.value = "__new__";
+  loadEditor("__new__");
+  document.getElementById("editorTitle").value = title;
+  document.getElementById("editorRecipeLink").value = link;
+  document.getElementById("editorRecipeText").value = recipe;
+  ingredientEditor.innerHTML = "";
+  (ingredients.length ? ingredients : ["", "", "", "", ""]).forEach(item => ingredientEditor.appendChild(createIngredientInput(item)));
+  editorMessage.textContent = "Experimental recipe loaded into a new dinner draft.";
+}
+
+function exportState() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  downloadArea.innerHTML = "";
+  const box = document.createElement("div");
+  box.className = "download-box";
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ez_food_2_export.json";
+  a.textContent = "ez_food_2_export.json";
+  box.appendChild(a);
+  downloadArea.appendChild(box);
+}
+
+function renderAll() {
+  dbVersionText.textContent = "Database Version: " + (state.databaseVersion || DEFAULT_VERSION);
+  renderDinnerRows();
+  renderRecipes();
+  renderShoppingList();
+  renderEditorSelect();
+  loadEditor("__new__");
+  renderEfficiency();
+  renderExperimentalIngredients([]);
+  experimentalRecipeTitle.value = "";
+  experimentalRecipeText.value = "";
+  experimentalMessage.textContent = "";
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
+
+document.getElementById("randomizeAllBtn").addEventListener("click", spinAllSlots);
+document.getElementById("generateBtn").addEventListener("click", () => {
+  startFreshTrip();
+  renderRecipes();
+  renderShoppingList();
+  switchTab("shopping");
+});
+
+extraItemInput.addEventListener("input", () => renderSuggestions(extraItemInput.value));
+extraItemInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addExtraItem();
+  }
+});
+document.getElementById("addExtraBtn").addEventListener("click", addExtraItem);
+
+editorSelect.addEventListener("change", () => loadEditor(editorSelect.value));
+document.getElementById("addIngredientBtn").addEventListener("click", () => {
+  ingredientEditor.appendChild(createIngredientInput(""));
+});
+document.getElementById("saveDinnerBtn").addEventListener("click", () => {
+  const title = document.getElementById("editorTitle").value.trim();
+  const recipeLink = document.getElementById("editorRecipeLink").value.trim();
+  const recipe = document.getElementById("editorRecipeText").value.trim();
+  const ingredients = [...ingredientEditor.querySelectorAll("input")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
+  if (!title) {
+    editorMessage.textContent = "Please enter a dinner title.";
+    return;
+  }
+
+  const selected = editorSelect.value;
+  if (selected === "__new__") {
+    let id = slugify(title);
+    let counter = 2;
+    while (state.dinners.some(d => d.id === id)) {
+      id = slugify(title) + "-" + counter++;
+    }
+    state.dinners.push({ id, name: title, recipe, recipeLink, ingredients });
+    editorSelect.value = id;
+    editorMessage.textContent = "New dinner saved.";
+  } else {
+    const dinner = getDinnerById(selected);
+    if (!dinner) return;
+    dinner.name = title;
+    dinner.recipe = recipe;
+    dinner.recipeLink = recipeLink;
+    dinner.ingredients = ingredients;
+    editorMessage.textContent = "Dinner updated.";
+  }
+
+  saveState();
+  renderDinnerRows();
+  renderRecipes();
+  if (state.generated) renderShoppingList();
+  renderEditorSelect();
+  renderEfficiency();
+});
+
+document.getElementById("deleteDinnerBtn").addEventListener("click", () => {
+  const selected = editorSelect.value;
+  if (!selected || selected === "__new__") {
+    editorMessage.textContent = "Choose a saved dinner to delete.";
+    return;
+  }
+  state.dinners = state.dinners.filter(d => d.id !== selected);
+  state.selectedDinnerIds = state.selectedDinnerIds.map(id => id === selected ? "" : id);
+  saveState();
+  renderAll();
+  editorMessage.textContent = "Dinner deleted.";
+});
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+  exportState();
+  dbMessage.textContent = "Export ready.";
+});
+document.getElementById("importInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    state = migrateState(JSON.parse(text));
+    saveState();
+    renderAll();
+    dbMessage.textContent = "Import complete.";
+  } catch (err) {
+    dbMessage.textContent = "Import failed.";
+  }
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  state = migrateState(deepClone(DEFAULT_APP_DATA));
+  saveState();
+  renderAll();
+  dbMessage.textContent = "Reset to default.";
+});
+document.getElementById("updateInternalBtn").addEventListener("click", () => {
+  state.databaseVersion = DEFAULT_VERSION;
+  saveState();
+  dbMessage.textContent = "Internal database updated.";
+});
+
+document.getElementById("addAisleBtn").addEventListener("click", () => {
+  if (state.visibleAisles < 20) {
+    state.visibleAisles += 1;
+    saveState();
+    renderEfficiency();
+  }
+});
+
+document.getElementById("experimentalAddIngredientBtn").addEventListener("click", () => {
+  experimentalIngredientEditor.appendChild(createIngredientInput(""));
+});
+document.getElementById("experimentalParseBtn").addEventListener("click", async () => {
+  const url = experimentalRecipeLink.value.trim();
+  if (!isLikelyUrl(url)) {
+    experimentalMessage.textContent = "Please enter a valid recipe URL.";
+    return;
+  }
+  experimentalMessage.textContent = "Parsing...";
+  try {
+    const result = await parseRecipeFromUrl(url);
+    experimentalRecipeTitle.value = result.title || "";
+    if (result.ingredients.length) renderExperimentalIngredients(result.ingredients);
+    if (result.recipeText) experimentalRecipeText.value = result.recipeText;
+    if (!result.ingredients.length && !result.recipeText && !result.title) {
+      experimentalMessage.textContent = "Parser Error";
+      return;
+    }
+    experimentalMessage.textContent = "Parse complete.";
+  } catch (err) {
+    experimentalMessage.textContent = err.message === "CORS Error" ? "CORS Error" : "Parser Error";
+  }
+});
+document.getElementById("experimentalSendBtn").addEventListener("click", sendExperimentalToEditor);
+
+renderAll();
+</script>
+</body>
+</html>
